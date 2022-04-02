@@ -33,25 +33,15 @@ type Publish struct {
 	servant m.Servant
 }
 
-// Add is the proxy function for the method defined in the tars file, with the context
-func (obj *Publish) Add(a int32, b int32, c *int32, opts ...map[string]string) (ret int32, err error) {
+// Publish is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) Publish(pdt *Product, opts ...map[string]string) (ret bool, err error) {
 	var (
 		length int32
 		have   bool
 		ty     byte
 	)
 	buf := codec.NewBuffer()
-	err = buf.WriteInt32(a, 1)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32(b, 2)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32((*c), 3)
+	err = pdt.WriteBlock(buf, 1)
 	if err != nil {
 		return ret, err
 	}
@@ -67,18 +57,13 @@ func (obj *Publish) Add(a int32, b int32, c *int32, opts ...map[string]string) (
 	resp := new(requestf.ResponsePacket)
 	tarsCtx := context.Background()
 
-	err = obj.servant.TarsInvoke(tarsCtx, 0, "Add", buf.ToBytes(), statusMap, contextMap, resp)
+	err = obj.servant.TarsInvoke(tarsCtx, 0, "Publish", buf.ToBytes(), statusMap, contextMap, resp)
 	if err != nil {
 		return ret, err
 	}
 
 	readBuf := codec.NewReader(tools.Int8ToByte(resp.SBuffer))
-	err = readBuf.ReadInt32(&ret, 0, true)
-	if err != nil {
-		return ret, err
-	}
-
-	err = readBuf.ReadInt32(&(*c), 3, true)
+	err = readBuf.ReadBool(&ret, 0, true)
 	if err != nil {
 		return ret, err
 	}
@@ -110,25 +95,15 @@ func (obj *Publish) Add(a int32, b int32, c *int32, opts ...map[string]string) (
 	return ret, nil
 }
 
-// AddWithContext is the proxy function for the method defined in the tars file, with the context
-func (obj *Publish) AddWithContext(tarsCtx context.Context, a int32, b int32, c *int32, opts ...map[string]string) (ret int32, err error) {
+// PublishWithContext is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) PublishWithContext(tarsCtx context.Context, pdt *Product, opts ...map[string]string) (ret bool, err error) {
 	var (
 		length int32
 		have   bool
 		ty     byte
 	)
 	buf := codec.NewBuffer()
-	err = buf.WriteInt32(a, 1)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32(b, 2)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32((*c), 3)
+	err = pdt.WriteBlock(buf, 1)
 	if err != nil {
 		return ret, err
 	}
@@ -140,14 +115,13 @@ func (obj *Publish) AddWithContext(tarsCtx context.Context, a int32, b int32, c 
 		traceParamFlag := traceData.NeedTraceParam(trace.EstCS, uint(buf.Len()))
 		if traceParamFlag == trace.EnpNormal {
 			value := map[string]interface{}{}
-			value["a"] = a
-			value["b"] = b
+			value["pdt"] = pdt
 			p, _ := json.Marshal(value)
 			traceParam = string(p)
 		} else if traceParamFlag == trace.EnpOverMaxLen {
 			traceParam = "{\"trace_param_over_max_len\":true}"
 		}
-		tars.Trace(traceData.GetTraceKey(trace.EstCS), trace.TraceAnnotationCS, tars.GetClientConfig().ModuleName, obj.servant.Name(), "Add", 0, traceParam, "")
+		tars.Trace(traceData.GetTraceKey(trace.EstCS), trace.TraceAnnotationCS, tars.GetClientConfig().ModuleName, obj.servant.Name(), "Publish", 0, traceParam, "")
 	}
 
 	var statusMap map[string]string
@@ -160,18 +134,13 @@ func (obj *Publish) AddWithContext(tarsCtx context.Context, a int32, b int32, c 
 	}
 
 	resp := new(requestf.ResponsePacket)
-	err = obj.servant.TarsInvoke(tarsCtx, 0, "Add", buf.ToBytes(), statusMap, contextMap, resp)
+	err = obj.servant.TarsInvoke(tarsCtx, 0, "Publish", buf.ToBytes(), statusMap, contextMap, resp)
 	if err != nil {
 		return ret, err
 	}
 
 	readBuf := codec.NewReader(tools.Int8ToByte(resp.SBuffer))
-	err = readBuf.ReadInt32(&ret, 0, true)
-	if err != nil {
-		return ret, err
-	}
-
-	err = readBuf.ReadInt32(&(*c), 3, true)
+	err = readBuf.ReadBool(&ret, 0, true)
 	if err != nil {
 		return ret, err
 	}
@@ -182,13 +151,12 @@ func (obj *Publish) AddWithContext(tarsCtx context.Context, a int32, b int32, c 
 		if traceParamFlag == trace.EnpNormal {
 			value := map[string]interface{}{}
 			value[""] = ret
-			value["c"] = *c
 			p, _ := json.Marshal(value)
 			traceParam = string(p)
 		} else if traceParamFlag == trace.EnpOverMaxLen {
 			traceParam = "{\"trace_param_over_max_len\":true}"
 		}
-		tars.Trace(traceData.GetTraceKey(trace.EstCR), trace.TraceAnnotationCR, tars.GetClientConfig().ModuleName, obj.servant.Name(), "Add", int(resp.IRet), traceParam, "")
+		tars.Trace(traceData.GetTraceKey(trace.EstCR), trace.TraceAnnotationCR, tars.GetClientConfig().ModuleName, obj.servant.Name(), "Publish", int(resp.IRet), traceParam, "")
 	}
 
 	if len(opts) == 1 {
@@ -218,25 +186,15 @@ func (obj *Publish) AddWithContext(tarsCtx context.Context, a int32, b int32, c 
 	return ret, nil
 }
 
-// AddOneWayWithContext is the proxy function for the method defined in the tars file, with the context
-func (obj *Publish) AddOneWayWithContext(tarsCtx context.Context, a int32, b int32, c *int32, opts ...map[string]string) (ret int32, err error) {
+// PublishOneWayWithContext is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) PublishOneWayWithContext(tarsCtx context.Context, pdt *Product, opts ...map[string]string) (ret bool, err error) {
 	var (
 		length int32
 		have   bool
 		ty     byte
 	)
 	buf := codec.NewBuffer()
-	err = buf.WriteInt32(a, 1)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32(b, 2)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32((*c), 3)
+	err = pdt.WriteBlock(buf, 1)
 	if err != nil {
 		return ret, err
 	}
@@ -251,7 +209,7 @@ func (obj *Publish) AddOneWayWithContext(tarsCtx context.Context, a int32, b int
 	}
 
 	resp := new(requestf.ResponsePacket)
-	err = obj.servant.TarsInvoke(tarsCtx, 1, "Add", buf.ToBytes(), statusMap, contextMap, resp)
+	err = obj.servant.TarsInvoke(tarsCtx, 1, "Publish", buf.ToBytes(), statusMap, contextMap, resp)
 	if err != nil {
 		return ret, err
 	}
@@ -283,25 +241,15 @@ func (obj *Publish) AddOneWayWithContext(tarsCtx context.Context, a int32, b int
 	return ret, nil
 }
 
-// Sub is the proxy function for the method defined in the tars file, with the context
-func (obj *Publish) Sub(a int32, b int32, c *int32, opts ...map[string]string) (ret int32, err error) {
+// Update is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) Update(pdt *Product, opts ...map[string]string) (ret bool, err error) {
 	var (
 		length int32
 		have   bool
 		ty     byte
 	)
 	buf := codec.NewBuffer()
-	err = buf.WriteInt32(a, 1)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32(b, 2)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32((*c), 3)
+	err = pdt.WriteBlock(buf, 1)
 	if err != nil {
 		return ret, err
 	}
@@ -317,18 +265,13 @@ func (obj *Publish) Sub(a int32, b int32, c *int32, opts ...map[string]string) (
 	resp := new(requestf.ResponsePacket)
 	tarsCtx := context.Background()
 
-	err = obj.servant.TarsInvoke(tarsCtx, 0, "Sub", buf.ToBytes(), statusMap, contextMap, resp)
+	err = obj.servant.TarsInvoke(tarsCtx, 0, "Update", buf.ToBytes(), statusMap, contextMap, resp)
 	if err != nil {
 		return ret, err
 	}
 
 	readBuf := codec.NewReader(tools.Int8ToByte(resp.SBuffer))
-	err = readBuf.ReadInt32(&ret, 0, true)
-	if err != nil {
-		return ret, err
-	}
-
-	err = readBuf.ReadInt32(&(*c), 3, true)
+	err = readBuf.ReadBool(&ret, 0, true)
 	if err != nil {
 		return ret, err
 	}
@@ -360,25 +303,15 @@ func (obj *Publish) Sub(a int32, b int32, c *int32, opts ...map[string]string) (
 	return ret, nil
 }
 
-// SubWithContext is the proxy function for the method defined in the tars file, with the context
-func (obj *Publish) SubWithContext(tarsCtx context.Context, a int32, b int32, c *int32, opts ...map[string]string) (ret int32, err error) {
+// UpdateWithContext is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) UpdateWithContext(tarsCtx context.Context, pdt *Product, opts ...map[string]string) (ret bool, err error) {
 	var (
 		length int32
 		have   bool
 		ty     byte
 	)
 	buf := codec.NewBuffer()
-	err = buf.WriteInt32(a, 1)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32(b, 2)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32((*c), 3)
+	err = pdt.WriteBlock(buf, 1)
 	if err != nil {
 		return ret, err
 	}
@@ -390,14 +323,13 @@ func (obj *Publish) SubWithContext(tarsCtx context.Context, a int32, b int32, c 
 		traceParamFlag := traceData.NeedTraceParam(trace.EstCS, uint(buf.Len()))
 		if traceParamFlag == trace.EnpNormal {
 			value := map[string]interface{}{}
-			value["a"] = a
-			value["b"] = b
+			value["pdt"] = pdt
 			p, _ := json.Marshal(value)
 			traceParam = string(p)
 		} else if traceParamFlag == trace.EnpOverMaxLen {
 			traceParam = "{\"trace_param_over_max_len\":true}"
 		}
-		tars.Trace(traceData.GetTraceKey(trace.EstCS), trace.TraceAnnotationCS, tars.GetClientConfig().ModuleName, obj.servant.Name(), "Sub", 0, traceParam, "")
+		tars.Trace(traceData.GetTraceKey(trace.EstCS), trace.TraceAnnotationCS, tars.GetClientConfig().ModuleName, obj.servant.Name(), "Update", 0, traceParam, "")
 	}
 
 	var statusMap map[string]string
@@ -410,18 +342,13 @@ func (obj *Publish) SubWithContext(tarsCtx context.Context, a int32, b int32, c 
 	}
 
 	resp := new(requestf.ResponsePacket)
-	err = obj.servant.TarsInvoke(tarsCtx, 0, "Sub", buf.ToBytes(), statusMap, contextMap, resp)
+	err = obj.servant.TarsInvoke(tarsCtx, 0, "Update", buf.ToBytes(), statusMap, contextMap, resp)
 	if err != nil {
 		return ret, err
 	}
 
 	readBuf := codec.NewReader(tools.Int8ToByte(resp.SBuffer))
-	err = readBuf.ReadInt32(&ret, 0, true)
-	if err != nil {
-		return ret, err
-	}
-
-	err = readBuf.ReadInt32(&(*c), 3, true)
+	err = readBuf.ReadBool(&ret, 0, true)
 	if err != nil {
 		return ret, err
 	}
@@ -432,13 +359,12 @@ func (obj *Publish) SubWithContext(tarsCtx context.Context, a int32, b int32, c 
 		if traceParamFlag == trace.EnpNormal {
 			value := map[string]interface{}{}
 			value[""] = ret
-			value["c"] = *c
 			p, _ := json.Marshal(value)
 			traceParam = string(p)
 		} else if traceParamFlag == trace.EnpOverMaxLen {
 			traceParam = "{\"trace_param_over_max_len\":true}"
 		}
-		tars.Trace(traceData.GetTraceKey(trace.EstCR), trace.TraceAnnotationCR, tars.GetClientConfig().ModuleName, obj.servant.Name(), "Sub", int(resp.IRet), traceParam, "")
+		tars.Trace(traceData.GetTraceKey(trace.EstCR), trace.TraceAnnotationCR, tars.GetClientConfig().ModuleName, obj.servant.Name(), "Update", int(resp.IRet), traceParam, "")
 	}
 
 	if len(opts) == 1 {
@@ -468,25 +394,15 @@ func (obj *Publish) SubWithContext(tarsCtx context.Context, a int32, b int32, c 
 	return ret, nil
 }
 
-// SubOneWayWithContext is the proxy function for the method defined in the tars file, with the context
-func (obj *Publish) SubOneWayWithContext(tarsCtx context.Context, a int32, b int32, c *int32, opts ...map[string]string) (ret int32, err error) {
+// UpdateOneWayWithContext is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) UpdateOneWayWithContext(tarsCtx context.Context, pdt *Product, opts ...map[string]string) (ret bool, err error) {
 	var (
 		length int32
 		have   bool
 		ty     byte
 	)
 	buf := codec.NewBuffer()
-	err = buf.WriteInt32(a, 1)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32(b, 2)
-	if err != nil {
-		return ret, err
-	}
-
-	err = buf.WriteInt32((*c), 3)
+	err = pdt.WriteBlock(buf, 1)
 	if err != nil {
 		return ret, err
 	}
@@ -501,7 +417,767 @@ func (obj *Publish) SubOneWayWithContext(tarsCtx context.Context, a int32, b int
 	}
 
 	resp := new(requestf.ResponsePacket)
-	err = obj.servant.TarsInvoke(tarsCtx, 1, "Sub", buf.ToBytes(), statusMap, contextMap, resp)
+	err = obj.servant.TarsInvoke(tarsCtx, 1, "Update", buf.ToBytes(), statusMap, contextMap, resp)
+	if err != nil {
+		return ret, err
+	}
+
+	if len(opts) == 1 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+	} else if len(opts) == 2 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+		for k := range statusMap {
+			delete(statusMap, k)
+		}
+		for k, v := range resp.Status {
+			statusMap[k] = v
+		}
+	}
+	_ = length
+	_ = have
+	_ = ty
+	return ret, nil
+}
+
+// DelByID is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) DelByID(id int32, opts ...map[string]string) (ret bool, err error) {
+	var (
+		length int32
+		have   bool
+		ty     byte
+	)
+	buf := codec.NewBuffer()
+	err = buf.WriteInt32(id, 1)
+	if err != nil {
+		return ret, err
+	}
+
+	var statusMap map[string]string
+	var contextMap map[string]string
+	if len(opts) == 1 {
+		contextMap = opts[0]
+	} else if len(opts) == 2 {
+		contextMap = opts[0]
+		statusMap = opts[1]
+	}
+	resp := new(requestf.ResponsePacket)
+	tarsCtx := context.Background()
+
+	err = obj.servant.TarsInvoke(tarsCtx, 0, "DelByID", buf.ToBytes(), statusMap, contextMap, resp)
+	if err != nil {
+		return ret, err
+	}
+
+	readBuf := codec.NewReader(tools.Int8ToByte(resp.SBuffer))
+	err = readBuf.ReadBool(&ret, 0, true)
+	if err != nil {
+		return ret, err
+	}
+
+	if len(opts) == 1 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+	} else if len(opts) == 2 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+		for k := range statusMap {
+			delete(statusMap, k)
+		}
+		for k, v := range resp.Status {
+			statusMap[k] = v
+		}
+	}
+	_ = length
+	_ = have
+	_ = ty
+	return ret, nil
+}
+
+// DelByIDWithContext is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) DelByIDWithContext(tarsCtx context.Context, id int32, opts ...map[string]string) (ret bool, err error) {
+	var (
+		length int32
+		have   bool
+		ty     byte
+	)
+	buf := codec.NewBuffer()
+	err = buf.WriteInt32(id, 1)
+	if err != nil {
+		return ret, err
+	}
+
+	traceData, ok := current.GetTraceData(tarsCtx)
+	if ok && traceData.TraceCall {
+		traceData.NewSpan()
+		var traceParam string
+		traceParamFlag := traceData.NeedTraceParam(trace.EstCS, uint(buf.Len()))
+		if traceParamFlag == trace.EnpNormal {
+			value := map[string]interface{}{}
+			value["id"] = id
+			p, _ := json.Marshal(value)
+			traceParam = string(p)
+		} else if traceParamFlag == trace.EnpOverMaxLen {
+			traceParam = "{\"trace_param_over_max_len\":true}"
+		}
+		tars.Trace(traceData.GetTraceKey(trace.EstCS), trace.TraceAnnotationCS, tars.GetClientConfig().ModuleName, obj.servant.Name(), "DelByID", 0, traceParam, "")
+	}
+
+	var statusMap map[string]string
+	var contextMap map[string]string
+	if len(opts) == 1 {
+		contextMap = opts[0]
+	} else if len(opts) == 2 {
+		contextMap = opts[0]
+		statusMap = opts[1]
+	}
+
+	resp := new(requestf.ResponsePacket)
+	err = obj.servant.TarsInvoke(tarsCtx, 0, "DelByID", buf.ToBytes(), statusMap, contextMap, resp)
+	if err != nil {
+		return ret, err
+	}
+
+	readBuf := codec.NewReader(tools.Int8ToByte(resp.SBuffer))
+	err = readBuf.ReadBool(&ret, 0, true)
+	if err != nil {
+		return ret, err
+	}
+
+	if ok && traceData.TraceCall {
+		var traceParam string
+		traceParamFlag := traceData.NeedTraceParam(trace.EstCR, uint(readBuf.Len()))
+		if traceParamFlag == trace.EnpNormal {
+			value := map[string]interface{}{}
+			value[""] = ret
+			p, _ := json.Marshal(value)
+			traceParam = string(p)
+		} else if traceParamFlag == trace.EnpOverMaxLen {
+			traceParam = "{\"trace_param_over_max_len\":true}"
+		}
+		tars.Trace(traceData.GetTraceKey(trace.EstCR), trace.TraceAnnotationCR, tars.GetClientConfig().ModuleName, obj.servant.Name(), "DelByID", int(resp.IRet), traceParam, "")
+	}
+
+	if len(opts) == 1 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+	} else if len(opts) == 2 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+		for k := range statusMap {
+			delete(statusMap, k)
+		}
+		for k, v := range resp.Status {
+			statusMap[k] = v
+		}
+	}
+	_ = length
+	_ = have
+	_ = ty
+	return ret, nil
+}
+
+// DelByIDOneWayWithContext is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) DelByIDOneWayWithContext(tarsCtx context.Context, id int32, opts ...map[string]string) (ret bool, err error) {
+	var (
+		length int32
+		have   bool
+		ty     byte
+	)
+	buf := codec.NewBuffer()
+	err = buf.WriteInt32(id, 1)
+	if err != nil {
+		return ret, err
+	}
+
+	var statusMap map[string]string
+	var contextMap map[string]string
+	if len(opts) == 1 {
+		contextMap = opts[0]
+	} else if len(opts) == 2 {
+		contextMap = opts[0]
+		statusMap = opts[1]
+	}
+
+	resp := new(requestf.ResponsePacket)
+	err = obj.servant.TarsInvoke(tarsCtx, 1, "DelByID", buf.ToBytes(), statusMap, contextMap, resp)
+	if err != nil {
+		return ret, err
+	}
+
+	if len(opts) == 1 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+	} else if len(opts) == 2 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+		for k := range statusMap {
+			delete(statusMap, k)
+		}
+		for k, v := range resp.Status {
+			statusMap[k] = v
+		}
+	}
+	_ = length
+	_ = have
+	_ = ty
+	return ret, nil
+}
+
+// FindAllProduct is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) FindAllProduct(pdts *[]Product, opts ...map[string]string) (ret bool, err error) {
+	var (
+		length int32
+		have   bool
+		ty     byte
+	)
+	buf := codec.NewBuffer()
+	err = buf.WriteHead(codec.LIST, 1)
+	if err != nil {
+		return ret, err
+	}
+
+	err = buf.WriteInt32(int32(len((*pdts))), 0)
+	if err != nil {
+		return ret, err
+	}
+
+	for _, v := range *pdts {
+
+		err = v.WriteBlock(buf, 0)
+		if err != nil {
+			return ret, err
+		}
+
+	}
+
+	var statusMap map[string]string
+	var contextMap map[string]string
+	if len(opts) == 1 {
+		contextMap = opts[0]
+	} else if len(opts) == 2 {
+		contextMap = opts[0]
+		statusMap = opts[1]
+	}
+	resp := new(requestf.ResponsePacket)
+	tarsCtx := context.Background()
+
+	err = obj.servant.TarsInvoke(tarsCtx, 0, "FindAllProduct", buf.ToBytes(), statusMap, contextMap, resp)
+	if err != nil {
+		return ret, err
+	}
+
+	readBuf := codec.NewReader(tools.Int8ToByte(resp.SBuffer))
+	err = readBuf.ReadBool(&ret, 0, true)
+	if err != nil {
+		return ret, err
+	}
+
+	_, ty, err = readBuf.SkipToNoCheck(1, true)
+	if err != nil {
+		return ret, err
+	}
+
+	if ty == codec.LIST {
+		err = readBuf.ReadInt32(&length, 0, true)
+		if err != nil {
+			return ret, err
+		}
+
+		(*pdts) = make([]Product, length)
+		for i0, e0 := int32(0), length; i0 < e0; i0++ {
+
+			err = (*pdts)[i0].ReadBlock(readBuf, 0, false)
+			if err != nil {
+				return ret, err
+			}
+
+		}
+	} else if ty == codec.SimpleList {
+		err = fmt.Errorf("not support SimpleList type")
+		if err != nil {
+			return ret, err
+		}
+
+	} else {
+		err = fmt.Errorf("require vector, but not")
+		if err != nil {
+			return ret, err
+		}
+
+	}
+
+	if len(opts) == 1 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+	} else if len(opts) == 2 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+		for k := range statusMap {
+			delete(statusMap, k)
+		}
+		for k, v := range resp.Status {
+			statusMap[k] = v
+		}
+	}
+	_ = length
+	_ = have
+	_ = ty
+	return ret, nil
+}
+
+// FindAllProductWithContext is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) FindAllProductWithContext(tarsCtx context.Context, pdts *[]Product, opts ...map[string]string) (ret bool, err error) {
+	var (
+		length int32
+		have   bool
+		ty     byte
+	)
+	buf := codec.NewBuffer()
+	err = buf.WriteHead(codec.LIST, 1)
+	if err != nil {
+		return ret, err
+	}
+
+	err = buf.WriteInt32(int32(len((*pdts))), 0)
+	if err != nil {
+		return ret, err
+	}
+
+	for _, v := range *pdts {
+
+		err = v.WriteBlock(buf, 0)
+		if err != nil {
+			return ret, err
+		}
+
+	}
+
+	traceData, ok := current.GetTraceData(tarsCtx)
+	if ok && traceData.TraceCall {
+		traceData.NewSpan()
+		var traceParam string
+		traceParamFlag := traceData.NeedTraceParam(trace.EstCS, uint(buf.Len()))
+		if traceParamFlag == trace.EnpNormal {
+			value := map[string]interface{}{}
+			p, _ := json.Marshal(value)
+			traceParam = string(p)
+		} else if traceParamFlag == trace.EnpOverMaxLen {
+			traceParam = "{\"trace_param_over_max_len\":true}"
+		}
+		tars.Trace(traceData.GetTraceKey(trace.EstCS), trace.TraceAnnotationCS, tars.GetClientConfig().ModuleName, obj.servant.Name(), "FindAllProduct", 0, traceParam, "")
+	}
+
+	var statusMap map[string]string
+	var contextMap map[string]string
+	if len(opts) == 1 {
+		contextMap = opts[0]
+	} else if len(opts) == 2 {
+		contextMap = opts[0]
+		statusMap = opts[1]
+	}
+
+	resp := new(requestf.ResponsePacket)
+	err = obj.servant.TarsInvoke(tarsCtx, 0, "FindAllProduct", buf.ToBytes(), statusMap, contextMap, resp)
+	if err != nil {
+		return ret, err
+	}
+
+	readBuf := codec.NewReader(tools.Int8ToByte(resp.SBuffer))
+	err = readBuf.ReadBool(&ret, 0, true)
+	if err != nil {
+		return ret, err
+	}
+
+	_, ty, err = readBuf.SkipToNoCheck(1, true)
+	if err != nil {
+		return ret, err
+	}
+
+	if ty == codec.LIST {
+		err = readBuf.ReadInt32(&length, 0, true)
+		if err != nil {
+			return ret, err
+		}
+
+		(*pdts) = make([]Product, length)
+		for i1, e1 := int32(0), length; i1 < e1; i1++ {
+
+			err = (*pdts)[i1].ReadBlock(readBuf, 0, false)
+			if err != nil {
+				return ret, err
+			}
+
+		}
+	} else if ty == codec.SimpleList {
+		err = fmt.Errorf("not support SimpleList type")
+		if err != nil {
+			return ret, err
+		}
+
+	} else {
+		err = fmt.Errorf("require vector, but not")
+		if err != nil {
+			return ret, err
+		}
+
+	}
+
+	if ok && traceData.TraceCall {
+		var traceParam string
+		traceParamFlag := traceData.NeedTraceParam(trace.EstCR, uint(readBuf.Len()))
+		if traceParamFlag == trace.EnpNormal {
+			value := map[string]interface{}{}
+			value[""] = ret
+			value["pdts"] = *pdts
+			p, _ := json.Marshal(value)
+			traceParam = string(p)
+		} else if traceParamFlag == trace.EnpOverMaxLen {
+			traceParam = "{\"trace_param_over_max_len\":true}"
+		}
+		tars.Trace(traceData.GetTraceKey(trace.EstCR), trace.TraceAnnotationCR, tars.GetClientConfig().ModuleName, obj.servant.Name(), "FindAllProduct", int(resp.IRet), traceParam, "")
+	}
+
+	if len(opts) == 1 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+	} else if len(opts) == 2 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+		for k := range statusMap {
+			delete(statusMap, k)
+		}
+		for k, v := range resp.Status {
+			statusMap[k] = v
+		}
+	}
+	_ = length
+	_ = have
+	_ = ty
+	return ret, nil
+}
+
+// FindAllProductOneWayWithContext is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) FindAllProductOneWayWithContext(tarsCtx context.Context, pdts *[]Product, opts ...map[string]string) (ret bool, err error) {
+	var (
+		length int32
+		have   bool
+		ty     byte
+	)
+	buf := codec.NewBuffer()
+	err = buf.WriteHead(codec.LIST, 1)
+	if err != nil {
+		return ret, err
+	}
+
+	err = buf.WriteInt32(int32(len((*pdts))), 0)
+	if err != nil {
+		return ret, err
+	}
+
+	for _, v := range *pdts {
+
+		err = v.WriteBlock(buf, 0)
+		if err != nil {
+			return ret, err
+		}
+
+	}
+
+	var statusMap map[string]string
+	var contextMap map[string]string
+	if len(opts) == 1 {
+		contextMap = opts[0]
+	} else if len(opts) == 2 {
+		contextMap = opts[0]
+		statusMap = opts[1]
+	}
+
+	resp := new(requestf.ResponsePacket)
+	err = obj.servant.TarsInvoke(tarsCtx, 1, "FindAllProduct", buf.ToBytes(), statusMap, contextMap, resp)
+	if err != nil {
+		return ret, err
+	}
+
+	if len(opts) == 1 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+	} else if len(opts) == 2 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+		for k := range statusMap {
+			delete(statusMap, k)
+		}
+		for k, v := range resp.Status {
+			statusMap[k] = v
+		}
+	}
+	_ = length
+	_ = have
+	_ = ty
+	return ret, nil
+}
+
+// FindProductByID is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) FindProductByID(id int32, pdt *Product, opts ...map[string]string) (ret bool, err error) {
+	var (
+		length int32
+		have   bool
+		ty     byte
+	)
+	buf := codec.NewBuffer()
+	err = buf.WriteInt32(id, 1)
+	if err != nil {
+		return ret, err
+	}
+
+	err = (*pdt).WriteBlock(buf, 2)
+	if err != nil {
+		return ret, err
+	}
+
+	var statusMap map[string]string
+	var contextMap map[string]string
+	if len(opts) == 1 {
+		contextMap = opts[0]
+	} else if len(opts) == 2 {
+		contextMap = opts[0]
+		statusMap = opts[1]
+	}
+	resp := new(requestf.ResponsePacket)
+	tarsCtx := context.Background()
+
+	err = obj.servant.TarsInvoke(tarsCtx, 0, "FindProductByID", buf.ToBytes(), statusMap, contextMap, resp)
+	if err != nil {
+		return ret, err
+	}
+
+	readBuf := codec.NewReader(tools.Int8ToByte(resp.SBuffer))
+	err = readBuf.ReadBool(&ret, 0, true)
+	if err != nil {
+		return ret, err
+	}
+
+	err = (*pdt).ReadBlock(readBuf, 2, true)
+	if err != nil {
+		return ret, err
+	}
+
+	if len(opts) == 1 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+	} else if len(opts) == 2 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+		for k := range statusMap {
+			delete(statusMap, k)
+		}
+		for k, v := range resp.Status {
+			statusMap[k] = v
+		}
+	}
+	_ = length
+	_ = have
+	_ = ty
+	return ret, nil
+}
+
+// FindProductByIDWithContext is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) FindProductByIDWithContext(tarsCtx context.Context, id int32, pdt *Product, opts ...map[string]string) (ret bool, err error) {
+	var (
+		length int32
+		have   bool
+		ty     byte
+	)
+	buf := codec.NewBuffer()
+	err = buf.WriteInt32(id, 1)
+	if err != nil {
+		return ret, err
+	}
+
+	err = (*pdt).WriteBlock(buf, 2)
+	if err != nil {
+		return ret, err
+	}
+
+	traceData, ok := current.GetTraceData(tarsCtx)
+	if ok && traceData.TraceCall {
+		traceData.NewSpan()
+		var traceParam string
+		traceParamFlag := traceData.NeedTraceParam(trace.EstCS, uint(buf.Len()))
+		if traceParamFlag == trace.EnpNormal {
+			value := map[string]interface{}{}
+			value["id"] = id
+			p, _ := json.Marshal(value)
+			traceParam = string(p)
+		} else if traceParamFlag == trace.EnpOverMaxLen {
+			traceParam = "{\"trace_param_over_max_len\":true}"
+		}
+		tars.Trace(traceData.GetTraceKey(trace.EstCS), trace.TraceAnnotationCS, tars.GetClientConfig().ModuleName, obj.servant.Name(), "FindProductByID", 0, traceParam, "")
+	}
+
+	var statusMap map[string]string
+	var contextMap map[string]string
+	if len(opts) == 1 {
+		contextMap = opts[0]
+	} else if len(opts) == 2 {
+		contextMap = opts[0]
+		statusMap = opts[1]
+	}
+
+	resp := new(requestf.ResponsePacket)
+	err = obj.servant.TarsInvoke(tarsCtx, 0, "FindProductByID", buf.ToBytes(), statusMap, contextMap, resp)
+	if err != nil {
+		return ret, err
+	}
+
+	readBuf := codec.NewReader(tools.Int8ToByte(resp.SBuffer))
+	err = readBuf.ReadBool(&ret, 0, true)
+	if err != nil {
+		return ret, err
+	}
+
+	err = (*pdt).ReadBlock(readBuf, 2, true)
+	if err != nil {
+		return ret, err
+	}
+
+	if ok && traceData.TraceCall {
+		var traceParam string
+		traceParamFlag := traceData.NeedTraceParam(trace.EstCR, uint(readBuf.Len()))
+		if traceParamFlag == trace.EnpNormal {
+			value := map[string]interface{}{}
+			value[""] = ret
+			value["pdt"] = *pdt
+			p, _ := json.Marshal(value)
+			traceParam = string(p)
+		} else if traceParamFlag == trace.EnpOverMaxLen {
+			traceParam = "{\"trace_param_over_max_len\":true}"
+		}
+		tars.Trace(traceData.GetTraceKey(trace.EstCR), trace.TraceAnnotationCR, tars.GetClientConfig().ModuleName, obj.servant.Name(), "FindProductByID", int(resp.IRet), traceParam, "")
+	}
+
+	if len(opts) == 1 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+	} else if len(opts) == 2 {
+		for k := range contextMap {
+			delete(contextMap, k)
+		}
+		for k, v := range resp.Context {
+			contextMap[k] = v
+		}
+		for k := range statusMap {
+			delete(statusMap, k)
+		}
+		for k, v := range resp.Status {
+			statusMap[k] = v
+		}
+	}
+	_ = length
+	_ = have
+	_ = ty
+	return ret, nil
+}
+
+// FindProductByIDOneWayWithContext is the proxy function for the method defined in the tars file, with the context
+func (obj *Publish) FindProductByIDOneWayWithContext(tarsCtx context.Context, id int32, pdt *Product, opts ...map[string]string) (ret bool, err error) {
+	var (
+		length int32
+		have   bool
+		ty     byte
+	)
+	buf := codec.NewBuffer()
+	err = buf.WriteInt32(id, 1)
+	if err != nil {
+		return ret, err
+	}
+
+	err = (*pdt).WriteBlock(buf, 2)
+	if err != nil {
+		return ret, err
+	}
+
+	var statusMap map[string]string
+	var contextMap map[string]string
+	if len(opts) == 1 {
+		contextMap = opts[0]
+	} else if len(opts) == 2 {
+		contextMap = opts[0]
+		statusMap = opts[1]
+	}
+
+	resp := new(requestf.ResponsePacket)
+	err = obj.servant.TarsInvoke(tarsCtx, 1, "FindProductByID", buf.ToBytes(), statusMap, contextMap, resp)
 	if err != nil {
 		return ret, err
 	}
@@ -559,12 +1235,18 @@ func (obj *Publish) AddServantWithContext(imp PublishServantWithContext, servant
 }
 
 type PublishServant interface {
-	Add(a int32, b int32, c *int32) (ret int32, err error)
-	Sub(a int32, b int32, c *int32) (ret int32, err error)
+	Publish(pdt *Product) (ret bool, err error)
+	Update(pdt *Product) (ret bool, err error)
+	DelByID(id int32) (ret bool, err error)
+	FindAllProduct(pdts *[]Product) (ret bool, err error)
+	FindProductByID(id int32, pdt *Product) (ret bool, err error)
 }
 type PublishServantWithContext interface {
-	Add(tarsCtx context.Context, a int32, b int32, c *int32) (ret int32, err error)
-	Sub(tarsCtx context.Context, a int32, b int32, c *int32) (ret int32, err error)
+	Publish(tarsCtx context.Context, pdt *Product) (ret bool, err error)
+	Update(tarsCtx context.Context, pdt *Product) (ret bool, err error)
+	DelByID(tarsCtx context.Context, id int32) (ret bool, err error)
+	FindAllProduct(tarsCtx context.Context, pdts *[]Product) (ret bool, err error)
+	FindProductByID(tarsCtx context.Context, id int32, pdt *Product) (ret bool, err error)
 }
 
 // Dispatch is used to call the server side implement for the method defined in the tars file. withContext shows using context or not.
@@ -577,19 +1259,12 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 	readBuf := codec.NewReader(tools.Int8ToByte(tarsReq.SBuffer))
 	buf := codec.NewBuffer()
 	switch tarsReq.SFuncName {
-	case "Add":
-		var a int32
-		var b int32
-		var c int32
+	case "Publish":
+		var pdt Product
 
 		if tarsReq.IVersion == basef.TARSVERSION {
 
-			err = readBuf.ReadInt32(&a, 1, true)
-			if err != nil {
-				return err
-			}
-
-			err = readBuf.ReadInt32(&b, 2, true)
+			err = pdt.ReadBlock(readBuf, 1, true)
 			if err != nil {
 				return err
 			}
@@ -600,16 +1275,9 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 
 			var tupBuffer []byte
 
-			reqTup.GetBuffer("a", &tupBuffer)
+			reqTup.GetBuffer("pdt", &tupBuffer)
 			readBuf.Reset(tupBuffer)
-			err = readBuf.ReadInt32(&a, 0, true)
-			if err != nil {
-				return err
-			}
-
-			reqTup.GetBuffer("b", &tupBuffer)
-			readBuf.Reset(tupBuffer)
-			err = readBuf.ReadInt32(&b, 0, true)
+			err = pdt.ReadBlock(readBuf, 0, true)
 			if err != nil {
 				return err
 			}
@@ -623,14 +1291,9 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 				return fmt.Errorf("decode reqpacket failed, error: %+v", err)
 			}
 			{
-				jsonStr, _ := json.Marshal(jsonData["a"])
-				if err = json.Unmarshal(jsonStr, &a); err != nil {
-					return err
-				}
-			}
-			{
-				jsonStr, _ := json.Marshal(jsonData["b"])
-				if err = json.Unmarshal(jsonStr, &b); err != nil {
+				jsonStr, _ := json.Marshal(jsonData["pdt"])
+				pdt.ResetDefault()
+				if err = json.Unmarshal(jsonStr, &pdt); err != nil {
 					return err
 				}
 			}
@@ -646,23 +1309,22 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 			traceParamFlag := traceData.NeedTraceParam(trace.EstSR, uint(readBuf.Len()))
 			if traceParamFlag == trace.EnpNormal {
 				value := map[string]interface{}{}
-				value["a"] = a
-				value["b"] = b
+				value["pdt"] = pdt
 				p, _ := json.Marshal(value)
 				traceParam = string(p)
 			} else if traceParamFlag == trace.EnpOverMaxLen {
 				traceParam = "{\"trace_param_over_max_len\":true}"
 			}
-			tars.Trace(traceData.GetTraceKey(trace.EstSR), trace.TraceAnnotationSR, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "Add", 0, traceParam, "")
+			tars.Trace(traceData.GetTraceKey(trace.EstSR), trace.TraceAnnotationSR, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "Publish", 0, traceParam, "")
 		}
 
-		var funRet int32
+		var funRet bool
 		if !withContext {
 			imp := val.(PublishServant)
-			funRet, err = imp.Add(a, b, &c)
+			funRet, err = imp.Publish(&pdt)
 		} else {
 			imp := val.(PublishServantWithContext)
-			funRet, err = imp.Add(tarsCtx, a, b, &c)
+			funRet, err = imp.Publish(tarsCtx, &pdt)
 		}
 
 		if err != nil {
@@ -672,12 +1334,7 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 		if tarsReq.IVersion == basef.TARSVERSION {
 			buf.Reset()
 
-			err = buf.WriteInt32(funRet, 0)
-			if err != nil {
-				return err
-			}
-
-			err = buf.WriteInt32(c, 3)
+			err = buf.WriteBool(funRet, 0)
 			if err != nil {
 				return err
 			}
@@ -685,21 +1342,13 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 		} else if tarsReq.IVersion == basef.TUPVERSION {
 			rspTup := tup.NewUniAttribute()
 
-			err = buf.WriteInt32(funRet, 0)
+			err = buf.WriteBool(funRet, 0)
 			if err != nil {
 				return err
 			}
 
 			rspTup.PutBuffer("", buf.ToBytes())
 			rspTup.PutBuffer("tars_ret", buf.ToBytes())
-
-			buf.Reset()
-			err = buf.WriteInt32(c, 0)
-			if err != nil {
-				return err
-			}
-
-			rspTup.PutBuffer("c", buf.ToBytes())
 
 			buf.Reset()
 			err = rspTup.Encode(buf)
@@ -709,7 +1358,6 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 		} else if tarsReq.IVersion == basef.JSONVERSION {
 			rspJson := map[string]interface{}{}
 			rspJson["tars_ret"] = funRet
-			rspJson["c"] = c
 
 			var rspByte []byte
 			if rspByte, err = json.Marshal(rspJson); err != nil {
@@ -729,28 +1377,20 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 			if traceParamFlag == trace.EnpNormal {
 				value := map[string]interface{}{}
 				value[""] = funRet
-				value["c"] = c
 				p, _ := json.Marshal(value)
 				traceParam = string(p)
 			} else if traceParamFlag == trace.EnpOverMaxLen {
 				traceParam = "{\"trace_param_over_max_len\":true}"
 			}
-			tars.Trace(traceData.GetTraceKey(trace.EstSS), trace.TraceAnnotationSS, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "Add", 0, traceParam, "")
+			tars.Trace(traceData.GetTraceKey(trace.EstSS), trace.TraceAnnotationSS, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "Publish", 0, traceParam, "")
 		}
 
-	case "Sub":
-		var a int32
-		var b int32
-		var c int32
+	case "Update":
+		var pdt Product
 
 		if tarsReq.IVersion == basef.TARSVERSION {
 
-			err = readBuf.ReadInt32(&a, 1, true)
-			if err != nil {
-				return err
-			}
-
-			err = readBuf.ReadInt32(&b, 2, true)
+			err = pdt.ReadBlock(readBuf, 1, true)
 			if err != nil {
 				return err
 			}
@@ -761,16 +1401,9 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 
 			var tupBuffer []byte
 
-			reqTup.GetBuffer("a", &tupBuffer)
+			reqTup.GetBuffer("pdt", &tupBuffer)
 			readBuf.Reset(tupBuffer)
-			err = readBuf.ReadInt32(&a, 0, true)
-			if err != nil {
-				return err
-			}
-
-			reqTup.GetBuffer("b", &tupBuffer)
-			readBuf.Reset(tupBuffer)
-			err = readBuf.ReadInt32(&b, 0, true)
+			err = pdt.ReadBlock(readBuf, 0, true)
 			if err != nil {
 				return err
 			}
@@ -784,14 +1417,9 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 				return fmt.Errorf("decode reqpacket failed, error: %+v", err)
 			}
 			{
-				jsonStr, _ := json.Marshal(jsonData["a"])
-				if err = json.Unmarshal(jsonStr, &a); err != nil {
-					return err
-				}
-			}
-			{
-				jsonStr, _ := json.Marshal(jsonData["b"])
-				if err = json.Unmarshal(jsonStr, &b); err != nil {
+				jsonStr, _ := json.Marshal(jsonData["pdt"])
+				pdt.ResetDefault()
+				if err = json.Unmarshal(jsonStr, &pdt); err != nil {
 					return err
 				}
 			}
@@ -807,23 +1435,22 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 			traceParamFlag := traceData.NeedTraceParam(trace.EstSR, uint(readBuf.Len()))
 			if traceParamFlag == trace.EnpNormal {
 				value := map[string]interface{}{}
-				value["a"] = a
-				value["b"] = b
+				value["pdt"] = pdt
 				p, _ := json.Marshal(value)
 				traceParam = string(p)
 			} else if traceParamFlag == trace.EnpOverMaxLen {
 				traceParam = "{\"trace_param_over_max_len\":true}"
 			}
-			tars.Trace(traceData.GetTraceKey(trace.EstSR), trace.TraceAnnotationSR, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "Sub", 0, traceParam, "")
+			tars.Trace(traceData.GetTraceKey(trace.EstSR), trace.TraceAnnotationSR, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "Update", 0, traceParam, "")
 		}
 
-		var funRet int32
+		var funRet bool
 		if !withContext {
 			imp := val.(PublishServant)
-			funRet, err = imp.Sub(a, b, &c)
+			funRet, err = imp.Update(&pdt)
 		} else {
 			imp := val.(PublishServantWithContext)
-			funRet, err = imp.Sub(tarsCtx, a, b, &c)
+			funRet, err = imp.Update(tarsCtx, &pdt)
 		}
 
 		if err != nil {
@@ -833,12 +1460,7 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 		if tarsReq.IVersion == basef.TARSVERSION {
 			buf.Reset()
 
-			err = buf.WriteInt32(funRet, 0)
-			if err != nil {
-				return err
-			}
-
-			err = buf.WriteInt32(c, 3)
+			err = buf.WriteBool(funRet, 0)
 			if err != nil {
 				return err
 			}
@@ -846,21 +1468,13 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 		} else if tarsReq.IVersion == basef.TUPVERSION {
 			rspTup := tup.NewUniAttribute()
 
-			err = buf.WriteInt32(funRet, 0)
+			err = buf.WriteBool(funRet, 0)
 			if err != nil {
 				return err
 			}
 
 			rspTup.PutBuffer("", buf.ToBytes())
 			rspTup.PutBuffer("tars_ret", buf.ToBytes())
-
-			buf.Reset()
-			err = buf.WriteInt32(c, 0)
-			if err != nil {
-				return err
-			}
-
-			rspTup.PutBuffer("c", buf.ToBytes())
 
 			buf.Reset()
 			err = rspTup.Encode(buf)
@@ -870,7 +1484,6 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 		} else if tarsReq.IVersion == basef.JSONVERSION {
 			rspJson := map[string]interface{}{}
 			rspJson["tars_ret"] = funRet
-			rspJson["c"] = c
 
 			var rspByte []byte
 			if rspByte, err = json.Marshal(rspJson); err != nil {
@@ -890,13 +1503,404 @@ func (obj *Publish) Dispatch(tarsCtx context.Context, val interface{}, tarsReq *
 			if traceParamFlag == trace.EnpNormal {
 				value := map[string]interface{}{}
 				value[""] = funRet
-				value["c"] = c
 				p, _ := json.Marshal(value)
 				traceParam = string(p)
 			} else if traceParamFlag == trace.EnpOverMaxLen {
 				traceParam = "{\"trace_param_over_max_len\":true}"
 			}
-			tars.Trace(traceData.GetTraceKey(trace.EstSS), trace.TraceAnnotationSS, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "Sub", 0, traceParam, "")
+			tars.Trace(traceData.GetTraceKey(trace.EstSS), trace.TraceAnnotationSS, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "Update", 0, traceParam, "")
+		}
+
+	case "DelByID":
+		var id int32
+
+		if tarsReq.IVersion == basef.TARSVERSION {
+
+			err = readBuf.ReadInt32(&id, 1, true)
+			if err != nil {
+				return err
+			}
+
+		} else if tarsReq.IVersion == basef.TUPVERSION {
+			reqTup := tup.NewUniAttribute()
+			reqTup.Decode(readBuf)
+
+			var tupBuffer []byte
+
+			reqTup.GetBuffer("id", &tupBuffer)
+			readBuf.Reset(tupBuffer)
+			err = readBuf.ReadInt32(&id, 0, true)
+			if err != nil {
+				return err
+			}
+
+		} else if tarsReq.IVersion == basef.JSONVERSION {
+			var jsonData map[string]interface{}
+			decoder := json.NewDecoder(bytes.NewReader(readBuf.ToBytes()))
+			decoder.UseNumber()
+			err = decoder.Decode(&jsonData)
+			if err != nil {
+				return fmt.Errorf("decode reqpacket failed, error: %+v", err)
+			}
+			{
+				jsonStr, _ := json.Marshal(jsonData["id"])
+				if err = json.Unmarshal(jsonStr, &id); err != nil {
+					return err
+				}
+			}
+
+		} else {
+			err = fmt.Errorf("decode reqpacket fail, error version: %d", tarsReq.IVersion)
+			return err
+		}
+
+		traceData, ok := current.GetTraceData(tarsCtx)
+		if ok && traceData.TraceCall {
+			var traceParam string
+			traceParamFlag := traceData.NeedTraceParam(trace.EstSR, uint(readBuf.Len()))
+			if traceParamFlag == trace.EnpNormal {
+				value := map[string]interface{}{}
+				value["id"] = id
+				p, _ := json.Marshal(value)
+				traceParam = string(p)
+			} else if traceParamFlag == trace.EnpOverMaxLen {
+				traceParam = "{\"trace_param_over_max_len\":true}"
+			}
+			tars.Trace(traceData.GetTraceKey(trace.EstSR), trace.TraceAnnotationSR, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "DelByID", 0, traceParam, "")
+		}
+
+		var funRet bool
+		if !withContext {
+			imp := val.(PublishServant)
+			funRet, err = imp.DelByID(id)
+		} else {
+			imp := val.(PublishServantWithContext)
+			funRet, err = imp.DelByID(tarsCtx, id)
+		}
+
+		if err != nil {
+			return err
+		}
+
+		if tarsReq.IVersion == basef.TARSVERSION {
+			buf.Reset()
+
+			err = buf.WriteBool(funRet, 0)
+			if err != nil {
+				return err
+			}
+
+		} else if tarsReq.IVersion == basef.TUPVERSION {
+			rspTup := tup.NewUniAttribute()
+
+			err = buf.WriteBool(funRet, 0)
+			if err != nil {
+				return err
+			}
+
+			rspTup.PutBuffer("", buf.ToBytes())
+			rspTup.PutBuffer("tars_ret", buf.ToBytes())
+
+			buf.Reset()
+			err = rspTup.Encode(buf)
+			if err != nil {
+				return err
+			}
+		} else if tarsReq.IVersion == basef.JSONVERSION {
+			rspJson := map[string]interface{}{}
+			rspJson["tars_ret"] = funRet
+
+			var rspByte []byte
+			if rspByte, err = json.Marshal(rspJson); err != nil {
+				return err
+			}
+
+			buf.Reset()
+			err = buf.WriteSliceUint8(rspByte)
+			if err != nil {
+				return err
+			}
+		}
+
+		if ok && traceData.TraceCall {
+			var traceParam string
+			traceParamFlag := traceData.NeedTraceParam(trace.EstSS, uint(buf.Len()))
+			if traceParamFlag == trace.EnpNormal {
+				value := map[string]interface{}{}
+				value[""] = funRet
+				p, _ := json.Marshal(value)
+				traceParam = string(p)
+			} else if traceParamFlag == trace.EnpOverMaxLen {
+				traceParam = "{\"trace_param_over_max_len\":true}"
+			}
+			tars.Trace(traceData.GetTraceKey(trace.EstSS), trace.TraceAnnotationSS, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "DelByID", 0, traceParam, "")
+		}
+
+	case "FindAllProduct":
+		var pdts []Product
+
+		traceData, ok := current.GetTraceData(tarsCtx)
+		if ok && traceData.TraceCall {
+			var traceParam string
+			traceParamFlag := traceData.NeedTraceParam(trace.EstSR, uint(readBuf.Len()))
+			if traceParamFlag == trace.EnpNormal {
+				value := map[string]interface{}{}
+				p, _ := json.Marshal(value)
+				traceParam = string(p)
+			} else if traceParamFlag == trace.EnpOverMaxLen {
+				traceParam = "{\"trace_param_over_max_len\":true}"
+			}
+			tars.Trace(traceData.GetTraceKey(trace.EstSR), trace.TraceAnnotationSR, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "FindAllProduct", 0, traceParam, "")
+		}
+
+		var funRet bool
+		if !withContext {
+			imp := val.(PublishServant)
+			funRet, err = imp.FindAllProduct(&pdts)
+		} else {
+			imp := val.(PublishServantWithContext)
+			funRet, err = imp.FindAllProduct(tarsCtx, &pdts)
+		}
+
+		if err != nil {
+			return err
+		}
+
+		if tarsReq.IVersion == basef.TARSVERSION {
+			buf.Reset()
+
+			err = buf.WriteBool(funRet, 0)
+			if err != nil {
+				return err
+			}
+
+			err = buf.WriteHead(codec.LIST, 1)
+			if err != nil {
+				return err
+			}
+
+			err = buf.WriteInt32(int32(len(pdts)), 0)
+			if err != nil {
+				return err
+			}
+
+			for _, v := range pdts {
+
+				err = v.WriteBlock(buf, 0)
+				if err != nil {
+					return err
+				}
+
+			}
+
+		} else if tarsReq.IVersion == basef.TUPVERSION {
+			rspTup := tup.NewUniAttribute()
+
+			err = buf.WriteBool(funRet, 0)
+			if err != nil {
+				return err
+			}
+
+			rspTup.PutBuffer("", buf.ToBytes())
+			rspTup.PutBuffer("tars_ret", buf.ToBytes())
+
+			buf.Reset()
+			err = buf.WriteHead(codec.LIST, 0)
+			if err != nil {
+				return err
+			}
+
+			err = buf.WriteInt32(int32(len(pdts)), 0)
+			if err != nil {
+				return err
+			}
+
+			for _, v := range pdts {
+
+				err = v.WriteBlock(buf, 0)
+				if err != nil {
+					return err
+				}
+
+			}
+			rspTup.PutBuffer("pdts", buf.ToBytes())
+
+			buf.Reset()
+			err = rspTup.Encode(buf)
+			if err != nil {
+				return err
+			}
+		} else if tarsReq.IVersion == basef.JSONVERSION {
+			rspJson := map[string]interface{}{}
+			rspJson["tars_ret"] = funRet
+			rspJson["pdts"] = pdts
+
+			var rspByte []byte
+			if rspByte, err = json.Marshal(rspJson); err != nil {
+				return err
+			}
+
+			buf.Reset()
+			err = buf.WriteSliceUint8(rspByte)
+			if err != nil {
+				return err
+			}
+		}
+
+		if ok && traceData.TraceCall {
+			var traceParam string
+			traceParamFlag := traceData.NeedTraceParam(trace.EstSS, uint(buf.Len()))
+			if traceParamFlag == trace.EnpNormal {
+				value := map[string]interface{}{}
+				value[""] = funRet
+				value["pdts"] = pdts
+				p, _ := json.Marshal(value)
+				traceParam = string(p)
+			} else if traceParamFlag == trace.EnpOverMaxLen {
+				traceParam = "{\"trace_param_over_max_len\":true}"
+			}
+			tars.Trace(traceData.GetTraceKey(trace.EstSS), trace.TraceAnnotationSS, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "FindAllProduct", 0, traceParam, "")
+		}
+
+	case "FindProductByID":
+		var id int32
+		var pdt Product
+
+		if tarsReq.IVersion == basef.TARSVERSION {
+
+			err = readBuf.ReadInt32(&id, 1, true)
+			if err != nil {
+				return err
+			}
+
+		} else if tarsReq.IVersion == basef.TUPVERSION {
+			reqTup := tup.NewUniAttribute()
+			reqTup.Decode(readBuf)
+
+			var tupBuffer []byte
+
+			reqTup.GetBuffer("id", &tupBuffer)
+			readBuf.Reset(tupBuffer)
+			err = readBuf.ReadInt32(&id, 0, true)
+			if err != nil {
+				return err
+			}
+
+		} else if tarsReq.IVersion == basef.JSONVERSION {
+			var jsonData map[string]interface{}
+			decoder := json.NewDecoder(bytes.NewReader(readBuf.ToBytes()))
+			decoder.UseNumber()
+			err = decoder.Decode(&jsonData)
+			if err != nil {
+				return fmt.Errorf("decode reqpacket failed, error: %+v", err)
+			}
+			{
+				jsonStr, _ := json.Marshal(jsonData["id"])
+				if err = json.Unmarshal(jsonStr, &id); err != nil {
+					return err
+				}
+			}
+
+		} else {
+			err = fmt.Errorf("decode reqpacket fail, error version: %d", tarsReq.IVersion)
+			return err
+		}
+
+		traceData, ok := current.GetTraceData(tarsCtx)
+		if ok && traceData.TraceCall {
+			var traceParam string
+			traceParamFlag := traceData.NeedTraceParam(trace.EstSR, uint(readBuf.Len()))
+			if traceParamFlag == trace.EnpNormal {
+				value := map[string]interface{}{}
+				value["id"] = id
+				p, _ := json.Marshal(value)
+				traceParam = string(p)
+			} else if traceParamFlag == trace.EnpOverMaxLen {
+				traceParam = "{\"trace_param_over_max_len\":true}"
+			}
+			tars.Trace(traceData.GetTraceKey(trace.EstSR), trace.TraceAnnotationSR, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "FindProductByID", 0, traceParam, "")
+		}
+
+		var funRet bool
+		if !withContext {
+			imp := val.(PublishServant)
+			funRet, err = imp.FindProductByID(id, &pdt)
+		} else {
+			imp := val.(PublishServantWithContext)
+			funRet, err = imp.FindProductByID(tarsCtx, id, &pdt)
+		}
+
+		if err != nil {
+			return err
+		}
+
+		if tarsReq.IVersion == basef.TARSVERSION {
+			buf.Reset()
+
+			err = buf.WriteBool(funRet, 0)
+			if err != nil {
+				return err
+			}
+
+			err = pdt.WriteBlock(buf, 2)
+			if err != nil {
+				return err
+			}
+
+		} else if tarsReq.IVersion == basef.TUPVERSION {
+			rspTup := tup.NewUniAttribute()
+
+			err = buf.WriteBool(funRet, 0)
+			if err != nil {
+				return err
+			}
+
+			rspTup.PutBuffer("", buf.ToBytes())
+			rspTup.PutBuffer("tars_ret", buf.ToBytes())
+
+			buf.Reset()
+			err = pdt.WriteBlock(buf, 0)
+			if err != nil {
+				return err
+			}
+
+			rspTup.PutBuffer("pdt", buf.ToBytes())
+
+			buf.Reset()
+			err = rspTup.Encode(buf)
+			if err != nil {
+				return err
+			}
+		} else if tarsReq.IVersion == basef.JSONVERSION {
+			rspJson := map[string]interface{}{}
+			rspJson["tars_ret"] = funRet
+			rspJson["pdt"] = pdt
+
+			var rspByte []byte
+			if rspByte, err = json.Marshal(rspJson); err != nil {
+				return err
+			}
+
+			buf.Reset()
+			err = buf.WriteSliceUint8(rspByte)
+			if err != nil {
+				return err
+			}
+		}
+
+		if ok && traceData.TraceCall {
+			var traceParam string
+			traceParamFlag := traceData.NeedTraceParam(trace.EstSS, uint(buf.Len()))
+			if traceParamFlag == trace.EnpNormal {
+				value := map[string]interface{}{}
+				value[""] = funRet
+				value["pdt"] = pdt
+				p, _ := json.Marshal(value)
+				traceParam = string(p)
+			} else if traceParamFlag == trace.EnpOverMaxLen {
+				traceParam = "{\"trace_param_over_max_len\":true}"
+			}
+			tars.Trace(traceData.GetTraceKey(trace.EstSS), trace.TraceAnnotationSS, tars.GetClientConfig().ModuleName, tarsReq.SServantName, "FindProductByID", 0, traceParam, "")
 		}
 
 	default:

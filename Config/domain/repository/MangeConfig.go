@@ -35,7 +35,7 @@ func(m ManageConfig)Init()error{
 }
 
 func(m ManageConfig)CreateConfig(config *model.RequireConfig)error{
-	res := m.Db.Model(&model.RequireConfig{}).Create(config)
+	res := m.Db.Omit("id").Create(config)
 	return res.Error
 }
 func(m ManageConfig)FindAllConfig()(error,[]model.RequireConfig){

@@ -1,7 +1,32 @@
 module SanXiangBank
 {
+	struct Config{
+		0 optional int id;
+		1 optional string name;
+		2 optional int rlevel;
+		3 optional int rwork;
+		4 optional int rage;
+		5 optional bool rpromise;
+	};
+	struct Product{
+		0 optional int id;
+		1 optional string name;
+		2 optional int price;
+		3 optional int nums;
+		4 optional int stock;
+		5 optional int start;
+		6 optional int end;
+		7 optional int cid;
+		8 optional Config cfg;
+		9 optional string url;
+	};
+
 	interface Publish
 	{
-	    bool Create();
+	    bool Publish(Product pdt);
+		bool Update(Product pdt);
+		bool DelByID(int id);
+		bool FindAllProduct(out vector<Product> pdts);
+		bool FindProductByID(int id,out Product pdt);
 	};
 };
