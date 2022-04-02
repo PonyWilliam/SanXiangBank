@@ -1,0 +1,7 @@
+module SanXiangBank
+{
+	interface Publish
+	{
+	    bool Create();
+	};
+};
