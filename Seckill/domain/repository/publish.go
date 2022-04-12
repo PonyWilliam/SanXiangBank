@@ -15,6 +15,7 @@ type IProduct interface{
 	DelProductByID(id int32)(error)
 	FindAllProduct()(res []model.Product)
 	FindProductByID(id int32)(res model.Product)
+	
 }
 
 type ProductRepo struct{
